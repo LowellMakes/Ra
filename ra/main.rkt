@@ -1,21 +1,23 @@
 #lang r7rs
 
 (define-library (ra)
+  ;; Types
   (export profile
           profile?
           profile->name
-          profile->code
-
-          device
-          profiles
-
-          reset
+          profile->code)
+  ;; Parameters
+  (export device
+          profiles)
+  ;; Commands
+  (export reset
           start
           cool
           select-profile
           current-profile
           status
           header)
+  (export parse-input)
   (import (scheme base)
           (scheme read)
           (scheme write)
@@ -35,37 +37,39 @@
     (define profiles (make-parameter (list))))
   ;; Commands
   (begin
+    ;; Assert that a device is connected
     (define (device-connected!)
       (unless (device)
         (error "No device connected!")))
     
     (define (reset)
       (device-connected!)
-      (display "R\n" (output-port)))
+      (display "R\n" (device->output-port (device))))
 
     (define (start)
       (device-connected!)
-      (display "S\n" (output-port)))
+      (display "S\n" (device->output-port (device))))
 
     (define (cool)
       (device-connected!)
-      (display "C\n" (output-port)))
+      (display "C\n" (device->output-port (device))))
 
     (define (select-profile profile)
       (device-connected!)
-      (display (string-append (profile->code profile) "\n") (output-port)))
+      (display (string-append (profile->code profile) "\n")
+               (device->output-port (device))))
 
     (define (current-profile)
       (device-connected!)
-      (display "SP\n" (output-port)))
+      (display "SP\n" (device->output-port (device))))
 
     (define (status)
       (device-connected!)
-      (display "SS\n" (output-port)))
+      (display "SS\n" (device->output-port (device))))
 
     (define (header)
       (device-connected!)
-      (display "SH\n" (output-port))))
+      (display "SH\n" (device->output-port (device)))))
   (begin
     (define (parse-input on-reset
                          on-phase-change
