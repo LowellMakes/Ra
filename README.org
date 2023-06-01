@@ -1,0 +1,14 @@
+#+TITLE: Ra
+Ra is a graphical interface for controlling and monitoring a reflow oven.
+
+* Building
+This application should run on Windows and any Unix-like system.
+** Dependencies
+- [[https://racket-lang.org/][Racket]]
+- The Racket [[https://pkgs.racket-lang.org/package/r7rs][R7RS]] package
+- The Racket [[https://pkgs.racket-lang.org/package/libserialport][libserialport]] package
+- The native [[https://www.sigrok.org/wiki/Libserialport][libserialport]] package
+** Instructions
+*TODO*
+* Usage
+*TODO*
