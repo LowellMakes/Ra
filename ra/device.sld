@@ -1,9 +1,6 @@
-#lang r7rs
-
 (define-library (ra device)
-  (include "device/exports.scm")
+  (include-library-declarations "device/exports.scm")
   (import (scheme base))
   (cond-expand
-   (racket (import (libserialport)))
    (else (error "Missing import for serial port library")))
   (include "device/impl.scm"))
