@@ -4,49 +4,49 @@
 
 ;;; Internal utils
 ;; Assert that a device is connected
-(define (device-connected!)
+(define (assert-device-connected!)
   (unless (device)
     (error "No device connected!")))
 
 ;;; Commands
 (define (reset)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'R)
     (newline)))
 
 (define (start)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'S)
     (newline)))
 
 (define (cool)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'C)
     (newline)))
 
 (define (select-profile profile)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write (profile->code profile))
     (newline)))
 
 (define (current-profile)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'SP)
     (newline)))
 
 (define (status)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'SS)
     (newline)))
 
 (define (header)
-  (device-connected!)
+  (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'SH)
     (newline)))
@@ -60,15 +60,10 @@
     (oven-state (string->symbol (substring line 2))))
 
   (define (profile? line)
-    (and (> (string-length line) (string-length "PROFILE"))
-         (string=? (substring line 0 (string-length "PROFILE")) "PROFILE")))
+    (and (> (string-length line) 2)
+         (string=? (substring line 0 2) "P,")))
   (define (line->profile line)
-    (profile line
-	     (case (string-ref line (+ 1 (string-length "PROFILE")))
-	       ((#\A) 'P0)
-	       ((#\B) 'P1)
-	       ((#\C) 'P2)
-	       ((#\D) 'P3))))
+    (profile (substring line 2) #f))
 
   (define (cool? line)
     (and (> (string-length line) 2)
@@ -82,7 +77,7 @@
   (define (line->temperature line)
     (call-with-port (open-input-string line)
       (lambda (p)
-	(read p) ;; throw away the first T
+	(read p) ; throw away the first T
 	(let* ((seconds (second (read p)))
 	       (side (second (read p)))
 	       (front (second (read p)))
@@ -114,7 +109,7 @@
                     on-cool
                     on-temperature
                     on-plain-message)
-  (device-connected!)
+  (assert-device-connected!)
   (stream-for-each
    (lambda (msg)
      (cond
@@ -126,7 +121,8 @@
       (else (error "Unhandled event" msg))))
    (stream-events (device->input-port (device)))))
 
-;; DSL to build the event loop
+;; DSL to build the event loop.
+;; Pretty gnarly implementation, but the API is nice.
 (define-syntax handle-events
   (syntax-rules (:on-oven-state
                  :on-profile
