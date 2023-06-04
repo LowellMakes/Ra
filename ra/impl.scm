@@ -1,6 +1,5 @@
 ;;; Parameters
 (define device (make-parameter #f))
-(define profiles (make-parameter (list)))
 
 ;;; Internal utils
 ;; Assert that a device is connected

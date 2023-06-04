@@ -4,8 +4,7 @@
         profile->name
         profile->code)
 ;; Parameters
-(export device
-        profiles)
+(export device)
 ;; Commands
 (export reset
         start
