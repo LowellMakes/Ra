@@ -1,5 +1,6 @@
 ;;; Parameters
 (define device (make-parameter #f))
+(define profiles (make-parameter (list)))
 
 ;;; Internal utils
 ;; Assert that a device is connected
@@ -32,7 +33,7 @@
     (write (profile->code profile))
     (newline)))
 
-(define (current-profile)
+(define (list-profiles)
   (assert-device-connected!)
   (parameterize ((current-output-port (device->output-port (device))))
     (write 'SP)
@@ -60,9 +61,16 @@
 
   (define (profile? line)
     (and (> (string-length line) 2)
-         (string=? (substring line 0 2) "P,")))
+	 (char=? #\P (string-ref line 0))
+	 (member (string-ref line 1) (list #\0 #\1 #\2 #\3))
+	 (char=? #\, (string-ref line 2))))
   (define (line->profile line)
-    (profile (substring line 2) #f))
+    (call-with-port (open-input-string line)
+      (lambda (p)
+	(let* ((code (read p))
+	       (_ (read-char p))
+	       (name (read-line p)))
+	  (profile name code)))))
 
   (define (cool? line)
     (and (> (string-length line) 2)

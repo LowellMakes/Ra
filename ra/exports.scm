@@ -4,13 +4,14 @@
         profile->name
         profile->code)
 ;; Parameters
-(export device)
+(export device
+	profiles)
 ;; Commands
 (export reset
         start
         cool
         select-profile
-        current-profile
+        list-profiles
         status
         header)
 ;; Events
