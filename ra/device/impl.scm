@@ -1,4 +1,4 @@
-(define-record-type <decive>
+(define-record-type <device>
   (%device path input-port output-port)
   device?
   (path device->path)
