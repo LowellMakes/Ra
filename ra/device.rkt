@@ -2,7 +2,8 @@
 
 (define-library (ra device)
   (include "device/exports.scm")
-  (import (scheme base))
+  (import (except (scheme base) map)
+          (only (srfi 1) map))
   (cond-expand
    (racket (import (libserialport)))
    (else (error "Missing import for serial port library")))

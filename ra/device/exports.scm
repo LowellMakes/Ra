@@ -2,4 +2,5 @@
         device?
         device->path
         device->input-port
-        device->output-port)
+        device->output-port
+	available-devices)

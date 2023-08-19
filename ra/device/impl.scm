@@ -8,3 +8,6 @@
 (define (device path)
   (let-values (((in out) (open-serial-port path)))
     (%device path in out)))
+
+(define (available-devices)
+  (map device (serial-ports)))
